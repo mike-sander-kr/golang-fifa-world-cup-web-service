@@ -21,16 +21,14 @@ func ListWinners(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		res.Write(winners)
+	} else {
+		filteredWinners, err := data.ListAllByYear(year)
+		if err != nil {
+			res.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		res.Write(filteredWinners)
 	}
-} else {
-filteredWinners, err := data.ListAllByYear(year)
-if err != nil {
-res.WriteHeader(http.StatusBadRequest)
-return
-}
-res.Write(filteredWinners)
-}
-}
 }
 
 // AddNewWinner adds new winner to the list
@@ -42,7 +40,7 @@ func AddNewWinner(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusUnauthorized)
 	} else {
 		err := data.AddNewWinner(req.Body)
-		if err != nill {
+		if err != nil {
 			res.WriteHeader(http.StatusUnprocessableEntity)
 		}
 		res.WriteHeader(http.StatusCreated)
